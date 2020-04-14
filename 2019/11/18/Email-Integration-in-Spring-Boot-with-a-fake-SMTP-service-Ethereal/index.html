@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="Email Integration in Spring Boot with a fake SMTP service -- Ethereal"/><meta name="keywords" content="spring-boot, Lost in Wonderland" /><link rel="alternate" href="/atom.xml" title="Lost in Wonderland"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.11.0" />
+<link rel="canonical" href="http://yoursite.com/2019/11/18/Email-Integration-in-Spring-Boot-with-a-fake-SMTP-service-Ethereal/"/>
+
+<link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.11.0" />
+
+<script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>Email Integration in Spring Boot with a fake SMTP service -- Ethereal - Lost in Wonderland</title>
+  <meta name="generator" content="Hexo 4.2.0"></head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Lost in Wonderland</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/">
+        <li class="mobile-menu-item">Home
+          </li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags
+          </li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories
+          </li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Lost in Wonderland</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/">
+            Home
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/tags/">
+            Tags
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/categories/">
+            Categories
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/about/">
+            About
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title">Email Integration in Spring Boot with a fake SMTP service -- Ethereal
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-11-18
+        </span></div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Why-Ethereal"><span class="toc-text">Why Ethereal?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Create-Ethereal-Account"><span class="toc-text">Create Ethereal Account</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Integration-in-Spring-Boot"><span class="toc-text">Integration in Spring Boot</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Dependency"><span class="toc-text">Dependency</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Configuration"><span class="toc-text">Configuration</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Send-Email"><span class="toc-text">Send Email</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Check-your-email-at-Ethereal"><span class="toc-text">Check your email at Ethereal</span></a></li></ol>
+    </div>
+  </div><div class="post-content"><h2 id="Why-Ethereal"><a href="#Why-Ethereal" class="headerlink" title="Why Ethereal?"></a>Why Ethereal?</h2><p><code>Ethereal</code> is really useful for software development. You don’t need to deploy a pragmatic email server or config a real email account for sending email out. In development level, it’s the same as other SMTP service such as AWS, Azure if you take it as an outbound mail server. But unlike other real email service, it only accepts mail for delivery request but never deliver them out.</p>
+<h2 id="Create-Ethereal-Account"><a href="#Create-Ethereal-Account" class="headerlink" title="Create Ethereal Account"></a>Create Ethereal Account</h2><p>The easiest step in this article, just visit <a href="https://ethereal.email/" target="_blank" rel="noopener">Ethereal</a> and click <code>Create Ethereal Account</code>. Without typical boring sign-up process, a SMTP server information is generated for you immediately.</p>
+<p>The information includes:</p>
+<ul>
+<li>host</li>
+<li>port</li>
+<li>name</li>
+<li>username</li>
+<li>password</li>
+</ul>
+<h2 id="Integration-in-Spring-Boot"><a href="#Integration-in-Spring-Boot" class="headerlink" title="Integration in Spring Boot"></a>Integration in Spring Boot</h2><p>First of all, You need a Spring Boot project.</p>
+<h3 id="Dependency"><a href="#Dependency" class="headerlink" title="Dependency"></a>Dependency</h3><p>If your project uses Maven, just add <code>spring-boot-starter-mail</code> dependency in <code>pom.xml</code> file:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework.boot&lt;&#x2F;groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-boot-starter-mail&lt;&#x2F;artifactId&gt;</span><br><span class="line">&lt;&#x2F;dependency&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Configuration"><a href="#Configuration" class="headerlink" title="Configuration"></a>Configuration</h3><p>The spring boot starter mail needs some configuration which we have got from Ethereal.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">spring:</span><br><span class="line">  mail:</span><br><span class="line">    host: smtp.ethereal.email</span><br><span class="line">    port: 587</span><br><span class="line">    username: xxxxxx@ethereal.email</span><br><span class="line">    password: xxxxxxxx</span><br><span class="line">    properties:</span><br><span class="line">      mail:</span><br><span class="line">        smtp:</span><br><span class="line">          auth: true</span><br><span class="line">          starttls:</span><br><span class="line">            enable: true</span><br><span class="line">            required: true</span><br></pre></td></tr></table></figure>
+
+<h3 id="Send-Email"><a href="#Send-Email" class="headerlink" title="Send Email"></a>Send Email</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> javax.mail.MessagingException;</span><br><span class="line"><span class="keyword">import</span> javax.mail.internet.MimeMessage;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.mail.javamail.JavaMailSender;</span><br><span class="line"><span class="keyword">import</span> org.springframework.mail.javamail.MimeMessageHelper;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EmailService</span> </span>&#123;</span><br><span class="line">  </span><br><span class="line">  <span class="meta">@Autowired</span></span><br><span class="line">  <span class="keyword">private</span> JavaMailSender mailSender;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">send</span><span class="params">(String from, String to, String subject, String content)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      MimeMessage mimeMessage = mailSender.createMimeMessage();</span><br><span class="line">      MimeMessageHelper helper = <span class="keyword">new</span> MimeMessageHelper(mimeMessage, <span class="keyword">false</span>, <span class="string">"utf-8"</span>);</span><br><span class="line"></span><br><span class="line">      helper.setFrom(from);</span><br><span class="line">      helper.setTo(to);</span><br><span class="line">      helper.setSubject(subject);</span><br><span class="line">      mimeMessage.setContent(content, <span class="string">"text/html"</span>);</span><br><span class="line">      mailSender.send(mimeMessage);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (MessagingException e) &#123;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>The code is simple, once the <code>JavaMailSender</code> is injected, it can be used to send email via SMTP.</p>
+<h2 id="Check-your-email-at-Ethereal"><a href="#Check-your-email-at-Ethereal" class="headerlink" title="Check your email at Ethereal"></a>Check your email at Ethereal</h2><p>Ethereal is a fake SMTP service, so the email isn’t really sent to the receiver mailbox. It provides a <a href="https://ethereal.email/messages" target="_blank" rel="noopener">mailbox</a> for us to check the mails you sent from your server. You won’t change the email integration code when the true SMTP service is integrated. Go ahead, just update the SMTP server config.</p>
+
+      </div>
+      
+      <footer class="post-footer">
+        <div class="post-tags">
+            <a href="/tags/spring-boot/">spring-boot</a>
+            </div>
+        
+        <nav class="post-nav"><a class="prev" href="/2019/11/25/Solace/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">Solace</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    <a class="next" href="/2019/11/12/Race-condition/">
+        <span class="next-text nav-default">Race condition</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></footer>
+    </article></div><div class="comments" id="comments"></div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"></div><div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even" target="_blank" rel="noopener">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2015 - 2020<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Dzivet</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript" src="/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/src/even.js?v=2.11.0"></script>
+</body>
+</html>

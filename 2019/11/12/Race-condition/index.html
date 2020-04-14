@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="Race condition"/><link rel="alternate" href="/atom.xml" title="Lost in Wonderland"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.11.0" />
+<link rel="canonical" href="http://yoursite.com/2019/11/12/Race-condition/"/>
+
+<link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.11.0" />
+
+<script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>Race condition - Lost in Wonderland</title>
+  <meta name="generator" content="Hexo 4.2.0"></head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Lost in Wonderland</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/">
+        <li class="mobile-menu-item">Home
+          </li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags
+          </li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories
+          </li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Lost in Wonderland</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/">
+            Home
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/tags/">
+            Tags
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/categories/">
+            Categories
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/about/">
+            About
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title">Race condition
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-11-12
+        </span></div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#What-is-race-condition"><span class="toc-text">What is race condition?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Example"><span class="toc-text">Example</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Scenario-I-happy-path"><span class="toc-text">Scenario I (happy path)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Scenario-II"><span class="toc-text">Scenario II</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#How-to-avoid"><span class="toc-text">How to avoid?</span></a></li></ol>
+    </div>
+  </div><div class="post-content"><h2 id="What-is-race-condition"><a href="#What-is-race-condition" class="headerlink" title="What is race condition?"></a>What is race condition?</h2><p> <code>A race condition or race hazard is the condition of an electronics, software, or other system where the system&#39;s substantive behavior is dependent on the sequence or timing of other uncontrollable events.</code> – The definition from <code>Wikipedia</code>.</p>
+<p>From the perspective of the programmer, the race condition occured if the program behaved differently if the sequence of operations different. Race condition happened frequently in the <code>access before update</code> scenario if the code segment isn’t atomic or synchronized.</p>
+<h2 id="Example"><a href="#Example" class="headerlink" title="Example"></a>Example</h2><p>This example is simple and intuitive. Let’s see the code below:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">pubic <span class="keyword">void</span> UnsafeSequence &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> value;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getNext</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> value++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>The <code>getNext()</code> method looks atomic but actually it contains 3 phases:</p>
+<ul>
+<li>read <code>value</code></li>
+<li>increase <code>value</code> by 1</li>
+<li>write back the incresed <code>value</code></li>
+</ul>
+<p>So what happened if the two threads runs simultaneously without locking or synchronization? The outcome may be wrong.</p>
+<h3 id="Scenario-I-happy-path"><a href="#Scenario-I-happy-path" class="headerlink" title="Scenario I (happy path)"></a>Scenario I (happy path)</h3><table>
+<thead>
+<tr>
+<th>thread1</th>
+<th>thread2</th>
+<th>value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>read value</td>
+<td></td>
+<td>0</td>
+</tr>
+<tr>
+<td>increase value by 1</td>
+<td></td>
+<td>0</td>
+</tr>
+<tr>
+<td>write back</td>
+<td></td>
+<td>1</td>
+</tr>
+<tr>
+<td></td>
+<td>read value</td>
+<td>1</td>
+</tr>
+<tr>
+<td></td>
+<td>increase value by 1</td>
+<td>1</td>
+</tr>
+<tr>
+<td></td>
+<td>write back</td>
+<td>2</td>
+</tr>
+</tbody></table>
+<p>Two threads run one after one, so nothing wrong here.</p>
+<h3 id="Scenario-II"><a href="#Scenario-II" class="headerlink" title="Scenario II"></a>Scenario II</h3><table>
+<thead>
+<tr>
+<th>thread1</th>
+<th>thread2</th>
+<th>value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>read value</td>
+<td></td>
+<td>0</td>
+</tr>
+<tr>
+<td></td>
+<td>read value</td>
+<td>0</td>
+</tr>
+<tr>
+<td>increase value by 1</td>
+<td></td>
+<td>0</td>
+</tr>
+<tr>
+<td></td>
+<td>increase value by 1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>write back</td>
+<td></td>
+<td>1</td>
+</tr>
+<tr>
+<td></td>
+<td>write back</td>
+<td>1</td>
+</tr>
+</tbody></table>
+<p>If thread 2 reads the value before thread 1 writes back, the outcome is wrong which we expect 2 but actually get 1.</p>
+<h2 id="How-to-avoid"><a href="#How-to-avoid" class="headerlink" title="How to avoid?"></a>How to avoid?</h2><p>One way to avoid this is to use synchronization mechanism to ensure that this code segment can only be accessed by one process at a time.</p>
+<p>From language level, the way for Java to achieve this is to simply add <code>synchronization</code> keyword to its declaration:<br><code>public synchronized void getNext()</code>.</p>
+
+      </div>
+      
+      <footer class="post-footer">
+        
+        <nav class="post-nav"><a class="prev" href="/2019/11/18/Email-Integration-in-Spring-Boot-with-a-fake-SMTP-service-Ethereal/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">Email Integration in Spring Boot with a fake SMTP service -- Ethereal</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    <a class="next" href="/2019/08/24/Wrap-Spring-Boot-Controller-Response-by-customized-annotation/">
+        <span class="next-text nav-default">Wrap Spring Boot Controller Response by customized annotation</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></footer>
+    </article></div><div class="comments" id="comments"></div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"></div><div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even" target="_blank" rel="noopener">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2015 - 2020<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Dzivet</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript" src="/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/src/even.js?v=2.11.0"></script>
+</body>
+</html>
